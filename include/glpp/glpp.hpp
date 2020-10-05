@@ -1,5 +1,5 @@
-#include "gl.h"
 #include "buffer.hpp"
+#include "gl.h"
 #include "program.hpp"
 #include "shader.hpp"
 #include "vertexarray.hpp"

@@ -1,16 +1,17 @@
 #pragma once
 
-#include <glad/glad.h>
-
-#include <glpp/idhandle.hpp>
-#include <glpp/shader.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <tuple>
 #include <unordered_map>
 
+#include "gl.h"
+#include "idhandle.hpp"
+#include "shader.hpp"
+
 namespace glpp {
 class Program {
-public:
+ public:
   Program() { handle_.id = glCreateProgram(); }
 
   template <typename... Shader>
@@ -90,7 +91,7 @@ public:
   template <typename T>
   void Uniform(const std::string &name, const T &val);
 
-private:
+ private:
   /**
    * Get Uniform/Attribute location
    */
@@ -118,6 +119,27 @@ private:
   IdHandle<Delete> handle_;
   std::unordered_map<std::string, GLint> uniform_locs_, attrib_locs_;
 };
-}  // namespace glpp
 
-#include <glpp/uniform.inc>
+template <>
+inline void Program::Uniform<int>(const std::string &name, const int &val) {
+  glProgramUniform1i(Id(), uniform_locs_.at(name), val);
+}
+
+template <>
+inline void Program::Uniform<float>(const std::string &name, const float &val) {
+  glProgramUniform1f(Id(), uniform_locs_.at(name), val);
+}
+
+template <>
+inline void Program::Uniform<glm::vec3>(const std::string &name,
+                                        const glm::vec3 &val) {
+  glProgramUniform3fv(Id(), uniform_locs_.at(name), 1, glm::value_ptr(val));
+}
+
+template <>
+inline void Program::Uniform<glm::mat4>(const std::string &name,
+                                        const glm::mat4 &val) {
+  glProgramUniformMatrix4fv(Id(), uniform_locs_.at(name), 1, GL_FALSE,
+                            glm::value_ptr(val));
+}
+}  // namespace glpp

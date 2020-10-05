@@ -1,11 +1,11 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include <fstream>
-#include <glpp/idhandle.hpp>
 #include <iostream>
 #include <string>
+
+#include "gl.h"
+#include "idhandle.hpp"
 
 namespace glpp {
 enum ShaderType : GLenum {
@@ -15,7 +15,7 @@ enum ShaderType : GLenum {
 };
 
 class Shader {
-public:
+ public:
   explicit Shader(ShaderType type) { handle_.id = glCreateShader(type); }
 
   Shader(ShaderType type, const std::string &source) : Shader(type) {
@@ -66,7 +66,7 @@ public:
     return Shader(type, source);
   }
 
-private:
+ private:
   static void Delete(GLuint id) { glDeleteShader(id); }
 
   IdHandle<Delete> handle_;

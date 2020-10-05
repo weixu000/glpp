@@ -1,9 +1,9 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include <cassert>
 #include <utility>
+
+#include "gl.h"
 
 namespace glpp {
 using DeleteFuncType = void(GLuint);

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include <glm/glm.hpp>
-#include <glpp/buffer.hpp>
-#include <glpp/idhandle.hpp>
 #include <tuple>
+
+#include "buffer.hpp"
+#include "gl.h"
+#include "idhandle.hpp"
 
 namespace glpp {
 class VertexArray {
-public:
+ public:
   VertexArray() { glCreateVertexArrays(1, &handle_.id); }
 
   VertexArray(VertexArray &&other) = default;
@@ -65,7 +65,7 @@ public:
         bindingindex, std::make_index_sequence<std::tuple_size_v<Tuple>>{});
   }
 
-private:
+ private:
   template <typename Tuple, std::size_t... Is>
   void SetAttribFormatFromTupleImpl(GLuint bindingindex,
                                     std::index_sequence<Is...>) {
@@ -80,6 +80,23 @@ private:
 
   IdHandle<Delete> handle_;
 };
-}  // namespace glpp
 
-#include <glpp/attrib.inc>
+template <>
+inline void VertexArray::AttribFormat<float>(GLuint attribindex,
+                                             GLuint relativeoffset) {
+  AttribFormat(attribindex, 1, GL_FLOAT, GL_FALSE, relativeoffset);
+}
+
+template <>
+inline void VertexArray::AttribFormat<glm::vec2>(GLuint attribindex,
+                                                 GLuint relativeoffset) {
+  AttribFormat(attribindex, 2, GL_FLOAT, GL_FALSE, relativeoffset);
+}
+
+template <>
+inline void VertexArray::AttribFormat<glm::vec3>(GLuint attribindex,
+                                                 GLuint relativeoffset) {
+  AttribFormat(attribindex, 3, GL_FLOAT, GL_FALSE, relativeoffset);
+}
+
+}  // namespace glpp

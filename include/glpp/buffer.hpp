@@ -1,8 +1,7 @@
 #pragma once
 
-#include <glad/glad.h>
-
-#include <glpp/idhandle.hpp>
+#include "gl.h"
+#include "idhandle.hpp"
 
 namespace glpp {
 enum BufferTarget : GLenum {
@@ -11,7 +10,7 @@ enum BufferTarget : GLenum {
 };
 
 class Buffer {
-public:
+ public:
   Buffer() { glCreateBuffers(1, &handle_.id); }
 
   Buffer(Buffer &&other) = default;
@@ -44,7 +43,7 @@ public:
                offset);
   }
 
-private:
+ private:
   static void Delete(GLuint id) { glDeleteBuffers(1, &id); }
 
   IdHandle<Delete> handle_;
