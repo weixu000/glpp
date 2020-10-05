@@ -2,10 +2,7 @@
 #include <common.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glpp/buffer.hpp>
-#include <glpp/program.hpp>
-#include <glpp/shader.hpp>
-#include <glpp/vertexarray.hpp>
+#include <glpp/glpp.hpp>
 #include <iostream>
 #include <string>
 
