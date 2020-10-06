@@ -1,0 +1,6 @@
+include(FetchContent)
+FetchContent_Declare(glad URL ${CMAKE_CURRENT_SOURCE_DIR}/extern/glad.zip)
+FetchContent_Populate(glad)
+FetchContent_GetProperties(glad)
+set(GLAD_INCLUDE_PATH ${glad_SOURCE_DIR}/include)
+set(GLAD_SOURCE_PATH ${glad_SOURCE_DIR}/src)

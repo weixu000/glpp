@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gl.h"
 #include "details/idhandle.hpp"
+#include "gl.h"
 
 namespace glpp {
 enum BufferTarget : GLenum {
