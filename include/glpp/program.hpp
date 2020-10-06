@@ -1,48 +1,45 @@
 #pragma once
 
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <unordered_map>
 
-#include "details/idhandle.hpp"
+#include "details/object.hpp"
 #include "gl.h"
-#include "shader.hpp"
 
 namespace glpp {
-class Program {
- public:
-  Program() { handle_.id = glCreateProgram(); }
+namespace details {
+struct ProgramTrait {
+  static GLuint Create() { return glCreateProgram(); }
 
-  template <typename... Shader>
-  explicit Program(const Shader &... s) : Program() {
+  static void Delete(GLuint id) { glDeleteProgram(id); }
+};
+}  // namespace details
+
+class Program : public details::Object<details::ProgramTrait> {
+ public:
+  template <typename... Shaders>
+  explicit Program(const Shaders &... s) {
     Attach(s...);
     Link();
     Detach(s...);
   }
 
-  Program(Program &&other) = default;
-
-  Program &operator=(Program &&other) = default;
-
-  [[nodiscard]] GLuint Id() const { return handle_.id; }
-
   void Use() { glUseProgram(Id()); }
 
-  void Attach(const Shader &shader) { glAttachShader(Id(), shader.Id()); }
-
   template <typename... Shaders>
-  void Attach(const Shader &s, const Shaders &... ss) {
-    Attach(s);
-    (Attach(ss), ...);
+  void Attach(const Shaders &... ss) {
+    static_assert(sizeof...(ss), "No shader attached");
+    (glAttachShader(Id(), ss.Id()), ...);
   }
 
-  void Detach(const Shader &shader) { glDetachShader(Id(), shader.Id()); }
-
   template <typename... Shaders>
-  void Detach(const Shader &s, const Shaders &... ss) {
-    Detach(s);
-    (Detach(ss), ...);
+  void Detach(const Shaders &... ss) {
+    static_assert(sizeof...(ss), "No shader detached");
+    (glDetachShader(Id(), ss.Id()), ...);
   }
 
   void Link() {
@@ -114,9 +111,6 @@ class Program {
     return locs;
   }
 
-  static void Delete(GLuint id) { glDeleteProgram(id); }
-
-  details::IdHandle<Delete> handle_;
   std::unordered_map<std::string, GLint> uniform_locs_, attrib_locs_;
 };
 

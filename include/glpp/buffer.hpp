@@ -1,6 +1,6 @@
 #pragma once
 
-#include "details/idhandle.hpp"
+#include "details/object.hpp"
 #include "gl.h"
 
 namespace glpp {
@@ -9,18 +9,26 @@ enum BufferTarget : GLenum {
   ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER
 };
 
-class Buffer {
+namespace details {
+struct BufferTrait {
+  static GLuint Create() {
+    GLuint id;
+    glCreateBuffers(1, &id);
+    return id;
+  }
+
+  static void Delete(GLuint id) { glDeleteBuffers(1, &id); }
+
+  using Target = BufferTarget;
+
+  static void Bind(Target target, GLuint id) {
+    glBindBuffer(static_cast<GLenum>(target), id);
+  }
+};
+}  // namespace details
+
+class Buffer : public details::Object<details::BufferTrait> {
  public:
-  Buffer() { glCreateBuffers(1, &handle_.id); }
-
-  Buffer(Buffer &&other) = default;
-
-  Buffer &operator=(Buffer &&other) = default;
-
-  [[nodiscard]] GLuint Id() const { return handle_.id; }
-
-  void Bind(BufferTarget target) { glBindBuffer(target, Id()); }
-
   void CreateStorage(GLsizeiptr size, const void *data, GLbitfield flags) {
     glNamedBufferStorage(Id(), size, data, flags);
   }
@@ -42,10 +50,5 @@ class Buffer {
     SetSubData(arr.size() * sizeof(typename Container::value_type), arr.data(),
                offset);
   }
-
- private:
-  static void Delete(GLuint id) { glDeleteBuffers(1, &id); }
-
-  details::IdHandle<Delete> handle_;
 };
 }  // namespace glpp

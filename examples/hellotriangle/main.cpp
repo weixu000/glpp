@@ -58,8 +58,8 @@ int main() {
   Buffer vertex_buffer;
   vertex_buffer.CreateStorage(vertices, GL_CLIENT_STORAGE_BIT);
 
-  Program program(Shader(VERTEX_SHADER, vertex_shader_text),
-                  Shader(FRAGMENT_SHADER, fragment_shader_text));
+  Program program{VertexShader{vertex_shader_text},
+                  FragmentShader{fragment_shader_text}};
 
   VertexArray vao;
   vao.BindVertexBuffer(0, vertex_buffer, sizeof(vertex_t), 0);

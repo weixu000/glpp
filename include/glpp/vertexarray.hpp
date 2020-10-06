@@ -4,22 +4,26 @@
 #include <tuple>
 
 #include "buffer.hpp"
-#include "details/idhandle.hpp"
+#include "details/object.hpp"
 #include "gl.h"
 
 namespace glpp {
-class VertexArray {
+namespace details {
+struct VertexArrayTrait {
+  static GLuint Create() {
+    GLuint id;
+    glCreateVertexArrays(1, &id);
+    return id;
+  }
+
+  static void Delete(GLuint id) { glDeleteVertexArrays(1, &id); }
+
+  static void Bind(GLuint id) { glBindVertexArray(id); }
+};
+}  // namespace details
+
+class VertexArray : public details::Object<details::VertexArrayTrait> {
  public:
-  VertexArray() { glCreateVertexArrays(1, &handle_.id); }
-
-  VertexArray(VertexArray &&other) = default;
-
-  VertexArray &operator=(VertexArray &&other) = default;
-
-  [[nodiscard]] GLuint Id() const { return handle_.id; }
-
-  void Bind() { glBindVertexArray(Id()); }
-
   void BindElementBuffer(const Buffer &buffer) {
     glVertexArrayElementBuffer(Id(), buffer.Id());
   }
@@ -75,10 +79,6 @@ class VertexArray {
       AttribFormat<std::tuple_element_t<Is, Tuple>>(Is, offset)),
      ...);
   }
-
-  static void Delete(GLuint id) { glDeleteVertexArrays(1, &id); }
-
-  details::IdHandle<Delete> handle_;
 };
 
 template <>

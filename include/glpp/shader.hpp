@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-#include "details/idhandle.hpp"
+#include "details/object.hpp"
 #include "gl.h"
 
 namespace glpp {
@@ -14,20 +14,22 @@ enum ShaderType : GLenum {
   FRAGMENT_SHADER = GL_FRAGMENT_SHADER
 };
 
-class Shader {
- public:
-  explicit Shader(ShaderType type) { handle_.id = glCreateShader(type); }
+namespace details {
+template <ShaderType type>
+struct ShaderTrait {
+  static GLuint Create() { return glCreateShader(type); }
 
-  Shader(ShaderType type, const std::string &source) : Shader(type) {
+  static void Delete(GLuint id) { glDeleteShader(id); }
+};
+}  // namespace details
+
+template <ShaderType type>
+class Shader : public details::Object<details::ShaderTrait<type>> {
+ public:
+  explicit Shader(const std::string &source) {
     SetSource(source);
     Compile();
   }
-
-  Shader(Shader &&other) = default;
-
-  Shader &operator=(Shader &&other) = default;
-
-  [[nodiscard]] GLuint Id() const { return handle_.id; }
 
   void SetSource(const std::string &source) {
     const auto source_str = source.c_str();
@@ -53,7 +55,7 @@ class Shader {
     }
   }
 
-  static Shader FromFile(ShaderType type, const std::string &file_path) {
+  static Shader FromFile(const std::string &file_path) {
     std::string source;
     std::ifstream stream(file_path, std::ios::in);
     if (stream.is_open()) {
@@ -63,12 +65,11 @@ class Shader {
     } else {
       throw std::runtime_error("Cannot open " + file_path);
     }
-    return Shader(type, source);
+    return Shader(source);
   }
-
- private:
-  static void Delete(GLuint id) { glDeleteShader(id); }
-
-  details::IdHandle<Delete> handle_;
 };
+
+using VertexShader = Shader<VERTEX_SHADER>;
+using GeometryShader = Shader<GEOMETRY_SHADER>;
+using FragmentShader = Shader<FRAGMENT_SHADER>;
 }  // namespace glpp
