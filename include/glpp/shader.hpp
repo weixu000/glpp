@@ -4,8 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include "details/idhandle.hpp"
 #include "gl.h"
-#include "idhandle.hpp"
 
 namespace glpp {
 enum ShaderType : GLenum {
@@ -69,6 +69,6 @@ class Shader {
  private:
   static void Delete(GLuint id) { glDeleteShader(id); }
 
-  IdHandle<Delete> handle_;
+  details::IdHandle<Delete> handle_;
 };
 }  // namespace glpp

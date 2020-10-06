@@ -3,9 +3,9 @@
 #include <cassert>
 #include <utility>
 
-#include "gl.h"
+#include "../gl.h"
 
-namespace glpp {
+namespace glpp::details {
 using DeleteFuncType = void(GLuint);
 
 /**
@@ -35,4 +35,4 @@ struct IdHandle {
 
   GLuint id = 0U;
 };
-}  // namespace glpp
+}  // namespace glpp::details

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gl.h"
-#include "idhandle.hpp"
+#include "details/idhandle.hpp"
 
 namespace glpp {
 enum BufferTarget : GLenum {
@@ -46,6 +46,6 @@ class Buffer {
  private:
   static void Delete(GLuint id) { glDeleteBuffers(1, &id); }
 
-  IdHandle<Delete> handle_;
+  details::IdHandle<Delete> handle_;
 };
 }  // namespace glpp

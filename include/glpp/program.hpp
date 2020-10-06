@@ -5,8 +5,8 @@
 #include <tuple>
 #include <unordered_map>
 
+#include "details/idhandle.hpp"
 #include "gl.h"
-#include "idhandle.hpp"
 #include "shader.hpp"
 
 namespace glpp {
@@ -116,7 +116,7 @@ class Program {
 
   static void Delete(GLuint id) { glDeleteProgram(id); }
 
-  IdHandle<Delete> handle_;
+  details::IdHandle<Delete> handle_;
   std::unordered_map<std::string, GLint> uniform_locs_, attrib_locs_;
 };
 

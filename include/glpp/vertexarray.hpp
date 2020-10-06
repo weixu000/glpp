@@ -4,8 +4,8 @@
 #include <tuple>
 
 #include "buffer.hpp"
+#include "details/idhandle.hpp"
 #include "gl.h"
-#include "idhandle.hpp"
 
 namespace glpp {
 class VertexArray {
@@ -78,7 +78,7 @@ class VertexArray {
 
   static void Delete(GLuint id) { glDeleteVertexArrays(1, &id); }
 
-  IdHandle<Delete> handle_;
+  details::IdHandle<Delete> handle_;
 };
 
 template <>
