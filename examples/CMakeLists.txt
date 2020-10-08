@@ -9,3 +9,4 @@ endif ()
 
 add_subdirectory(commons)
 add_subdirectory(hello_triangle)
+add_subdirectory(many_axes)

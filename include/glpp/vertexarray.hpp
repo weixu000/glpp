@@ -99,4 +99,9 @@ inline void VertexArray::AttribFormat<glm::vec3>(GLuint attribindex,
   AttribFormat(attribindex, 3, GL_FLOAT, GL_FALSE, relativeoffset);
 }
 
+template <>
+inline void VertexArray::AttribFormat<glm::vec4>(GLuint attribindex,
+                                                 GLuint relativeoffset) {
+  AttribFormat(attribindex, 4, GL_FLOAT, GL_FALSE, relativeoffset);
+}
 }  // namespace glpp
