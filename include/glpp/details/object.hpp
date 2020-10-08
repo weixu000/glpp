@@ -19,7 +19,7 @@ class Object {
   Object &operator=(const Object &) = delete;
 
   Object &operator=(Object &&other) noexcept {
-    if (this == &other) return;
+    if (this == &other) return *this;
     Object tmp(std::move(*this));
     std::swap(id_, other.id_);
     return *this;
@@ -27,12 +27,12 @@ class Object {
 
   [[nodiscard]] GLuint Id() const { return id_; }
 
-  template <bool enabled = std::is_void_v<decltype(Trait::Bind(0U))>>
-  std::enable_if_t<enabled, void> Bind() {
+  template <bool = true>
+  void Bind() {
     Trait::Bind(id_);
   }
 
-  template <typename Target = typename Trait::Target>
+  template <typename Target>
   void Bind(Target target) {
     Trait::Bind(target, id_);
   }

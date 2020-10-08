@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glpp/glpp.hpp>
-#include <iostream>
 #include <string>
 
 namespace {
@@ -52,7 +51,7 @@ int main() {
   using namespace glm;
   using namespace glpp;
 
-  const auto window = SetupGL();
+  const auto window = SetupGL("Hello triangle");
   glfwSetKeyCallback(window, key_callback);
 
   Buffer vertex_buffer;
@@ -79,7 +78,7 @@ int main() {
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    mat4 m = rotate(mat4(1.f), (float)glfwGetTime(), {0, 0, 1});
+    mat4 m = rotate(mat4{1.f}, (float)glfwGetTime(), {0, 0, 1});
     mat4 p = ortho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
     mat4 mvp = p * m;
 

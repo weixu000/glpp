@@ -1,2 +1,0 @@
-add_executable(hellotriangle main.cpp)
-target_link_libraries(hellotriangle PRIVATE example-commons)

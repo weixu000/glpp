@@ -31,6 +31,8 @@ class Shader : public details::Object<details::ShaderTrait<type>> {
     Compile();
   }
 
+  using details::Object<details::ShaderTrait<type>>::Id;
+
   void SetSource(const std::string &source) {
     const auto source_str = source.c_str();
     glShaderSource(Id(), 1, &source_str, nullptr);

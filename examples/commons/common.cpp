@@ -1,16 +1,19 @@
 #include "common.hpp"
 
+#include <glpp/gl.h>
+
 #include <iostream>
 
+namespace {
 void ErrorCallback(int error, const char* description) {
   std::cerr << "Error: " << description << std::endl;
   exit(EXIT_FAILURE);
 }
+}  // namespace
 
-GLFWwindow* SetupGL() {
+GLFWwindow* SetupGL(const char* title) {
   if (!glfwInit()) exit(EXIT_FAILURE);
-  const auto window =
-      glfwCreateWindow(640, 480, "glpp example", nullptr, nullptr);
+  const auto window = glfwCreateWindow(640, 480, title, nullptr, nullptr);
   if (!window) {
     glfwTerminate();
     exit(EXIT_FAILURE);
