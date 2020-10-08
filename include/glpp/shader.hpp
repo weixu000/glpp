@@ -26,6 +26,8 @@ struct ShaderTrait {
 template <ShaderType type>
 class Shader : public details::Object<details::ShaderTrait<type>> {
  public:
+  Shader() = default;
+
   explicit Shader(const std::string &source) {
     SetSource(source);
     Compile();

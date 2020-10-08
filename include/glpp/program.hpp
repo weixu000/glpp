@@ -21,6 +21,8 @@ struct ProgramTrait {
 
 class Program : public details::Object<details::ProgramTrait> {
  public:
+  Program() = default;
+
   template <typename... Shaders>
   explicit Program(const Shaders &... s) {
     Attach(s...);
