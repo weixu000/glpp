@@ -61,12 +61,6 @@ void main()
     gl_FragColor = vec4(color, 1);
 }
 )";
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action,
-                  int mods) {
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
 }  // namespace
 
 int main() {
@@ -75,7 +69,6 @@ int main() {
   using namespace std;
 
   const auto window = SetupGL("Many axes");
-  glfwSetKeyCallback(window, key_callback);
 
   Program program{VertexShader{vertex_shader_source},
                   GeometryShader{geometry_shader_source},
@@ -109,17 +102,11 @@ int main() {
   glEnable(GL_DEPTH_TEST);
 
   while (!glfwWindowShouldClose(window)) {
-    float ratio;
-    int width, height;
-
-    glfwGetFramebufferSize(window, &width, &height);
-    ratio = width / (float)height;
-
-    const mat4 p = ortho(-ratio * 6, ratio * 6, -6.f, 6.f, -2.f, 2.f);
-    program.Uniform("viewPersp", p);
-
-    glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    const float ratio = (float)width / height;
+    const mat4 p = ortho(-ratio * 6, ratio * 6, -7.f, 7.f, -2.f, 2.f);
+    program.Uniform("viewPersp", p);
 
     for (int i = 0; i < 10 * 10; ++i) {
       transforms[i] = rotate(transforms[i], 0.01f, rotations[i]);

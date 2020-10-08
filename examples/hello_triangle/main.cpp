@@ -36,12 +36,6 @@ void main()
     gl_FragColor = vec4(color, 1.0);
 }
 )";
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action,
-                  int mods) {
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
 }  // namespace
 
 /**
@@ -52,7 +46,6 @@ int main() {
   using namespace glpp;
 
   const auto window = SetupGL("Hello triangle");
-  glfwSetKeyCallback(window, key_callback);
 
   Buffer vertex_buffer;
   vertex_buffer.CreateStorage(vertices);
@@ -69,15 +62,9 @@ int main() {
   vao.AttribFormat<glm::vec3>(vcol_location, sizeof(glm::vec2));
 
   while (!glfwWindowShouldClose(window)) {
-    float ratio;
-    int width, height;
-
-    glfwGetFramebufferSize(window, &width, &height);
-    ratio = width / (float)height;
-
-    glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    const float ratio = (float)width / height;
     mat4 m = rotate(mat4{1.f}, (float)glfwGetTime(), {0, 0, 1});
     mat4 p = ortho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
     mat4 mvp = p * m;
