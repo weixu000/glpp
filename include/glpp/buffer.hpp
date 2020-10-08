@@ -35,7 +35,7 @@ class Buffer : public details::Object<details::BufferTrait> {
 
   // For STL containers
   template <typename Container>
-  void CreateStorage(const Container &arr, GLbitfield flags) {
+  void CreateStorage(const Container &arr, GLbitfield flags = 0) {
     CreateStorage(arr.size() * sizeof(typename Container::value_type),
                   arr.data(), flags);
   }

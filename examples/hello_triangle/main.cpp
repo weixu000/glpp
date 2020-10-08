@@ -55,7 +55,7 @@ int main() {
   glfwSetKeyCallback(window, key_callback);
 
   Buffer vertex_buffer;
-  vertex_buffer.CreateStorage(vertices, GL_CLIENT_STORAGE_BIT);
+  vertex_buffer.CreateStorage(vertices);
 
   Program program{VertexShader{vertex_shader_text},
                   FragmentShader{fragment_shader_text}};
