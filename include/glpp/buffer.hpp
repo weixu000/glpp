@@ -29,7 +29,8 @@ struct BufferTrait {
 
 class Buffer : public details::Object<details::BufferTrait> {
  public:
-  void CreateStorage(GLsizeiptr size, const void *data, GLbitfield flags) {
+  void CreateStorage(GLsizeiptr size, const void *data = nullptr,
+                     GLbitfield flags = 0) {
     glNamedBufferStorage(Id(), size, data, flags);
   }
 
@@ -40,7 +41,8 @@ class Buffer : public details::Object<details::BufferTrait> {
                   arr.data(), flags);
   }
 
-  void SetSubData(GLsizeiptr size, const void *data, GLintptr offset = 0) {
+  void SetSubData(GLsizeiptr size, const void *data = nullptr,
+                  GLintptr offset = 0) {
     glNamedBufferSubData(Id(), offset, size, data);
   }
 
@@ -50,5 +52,7 @@ class Buffer : public details::Object<details::BufferTrait> {
     SetSubData(arr.size() * sizeof(typename Container::value_type), arr.data(),
                offset);
   }
+
+  void InvalidateData() { glInvalidateBufferData(Id()); }
 };
 }  // namespace glpp
