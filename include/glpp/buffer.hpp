@@ -4,7 +4,7 @@
 #include "gl.h"
 
 namespace glpp {
-enum BufferTarget : GLenum {
+enum class BufferTarget : GLenum {
   ARRAY_BUFFER = GL_ARRAY_BUFFER,
   ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER
 };

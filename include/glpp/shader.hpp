@@ -8,23 +8,23 @@
 #include "gl.h"
 
 namespace glpp {
-enum ShaderType : GLenum {
+enum class ShaderStage : GLenum {
   VERTEX_SHADER = GL_VERTEX_SHADER,
   GEOMETRY_SHADER = GL_GEOMETRY_SHADER,
   FRAGMENT_SHADER = GL_FRAGMENT_SHADER
 };
 
 namespace details {
-template <ShaderType type>
+template <ShaderStage stage>
 struct ShaderTrait {
-  static GLuint Create() { return glCreateShader(type); }
+  static GLuint Create() { return glCreateShader(static_cast<GLenum>(stage)); }
 
   static void Delete(GLuint id) { glDeleteShader(id); }
 };
 }  // namespace details
 
-template <ShaderType type>
-class Shader : public details::Object<details::ShaderTrait<type>> {
+template <ShaderStage stage>
+class Shader : public details::Object<details::ShaderTrait<stage>> {
  public:
   Shader() = default;
 
@@ -33,7 +33,7 @@ class Shader : public details::Object<details::ShaderTrait<type>> {
     Compile();
   }
 
-  using details::Object<details::ShaderTrait<type>>::Id;
+  using details::Object<details::ShaderTrait<stage>>::Id;
 
   void SetSource(const std::string &source) {
     const auto source_str = source.c_str();
@@ -73,7 +73,7 @@ class Shader : public details::Object<details::ShaderTrait<type>> {
   }
 };
 
-using VertexShader = Shader<VERTEX_SHADER>;
-using GeometryShader = Shader<GEOMETRY_SHADER>;
-using FragmentShader = Shader<FRAGMENT_SHADER>;
+using VertexShader = Shader<ShaderStage::VERTEX_SHADER>;
+using GeometryShader = Shader<ShaderStage::GEOMETRY_SHADER>;
+using FragmentShader = Shader<ShaderStage::FRAGMENT_SHADER>;
 }  // namespace glpp
