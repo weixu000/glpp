@@ -66,7 +66,7 @@ int main() {
 
     const float ratio = (float)width / height;
     mat4 m = rotate(mat4{1.f}, (float)glfwGetTime(), {0, 0, 1});
-    mat4 p = ortho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+    mat4 p = ortho(-ratio, ratio, -1.f, 1.f, -1.f, 1.f);
     mat4 mvp = p * m;
 
     program.Use();

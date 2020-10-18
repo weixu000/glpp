@@ -56,9 +56,11 @@ const char* fragment_shader_source = R"(
 
 in vec3 color;
 
+out vec4 fragColor;
+
 void main()
 {
-    gl_FragColor = vec4(color, 1);
+    fragColor = vec4(color, 1);
 }
 )";
 }  // namespace
