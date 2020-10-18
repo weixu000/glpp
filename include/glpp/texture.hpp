@@ -99,16 +99,15 @@ class TextureCubemap
       public details::TextureMipmapMixin<TextureCubemap>,
       public details::TextureFilteringMixin<TextureCubemap> {
  public:
-  void CreateStorage(GLsizei levels, GLenum internalformat, GLsizei width,
-                     GLsizei height) {
-    glTextureStorage2D(Id(), levels, internalformat, width, height);
+  void CreateStorage(GLsizei levels, GLenum internalformat, GLsizei size) {
+    glTextureStorage2D(Id(), levels, internalformat, size, size);
   }
 
   void SetSubImage(GLint level, GLint xoffset, GLint yoffset, GLint face,
-                   GLsizei width, GLsizei height, GLsizei depth, GLenum format,
-                   GLenum type, const void *pixels) {
-    glTextureSubImage3D(Id(), level, xoffset, yoffset, face, width, height,
-                        depth, format, type, pixels);
+                   GLsizei width, GLsizei height, GLenum format, GLenum type,
+                   const void *pixels) {
+    glTextureSubImage3D(Id(), level, xoffset, yoffset, face, width, height, 1,
+                        format, type, pixels);
   }
 };
 }  // namespace glpp
