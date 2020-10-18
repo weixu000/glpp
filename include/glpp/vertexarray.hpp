@@ -28,9 +28,13 @@ class VertexArray : public details::Object<details::VertexArrayTrait> {
     glVertexArrayElementBuffer(Id(), buffer.Id());
   }
 
-  void BindVertexBuffer(GLuint bindingindex, const Buffer &buffer,
+  void BindVertexBuffer(GLuint binding_index, const Buffer &buffer,
                         GLsizei stride, GLintptr offset = 0) {
-    glVertexArrayVertexBuffer(Id(), bindingindex, buffer.Id(), offset, stride);
+    glVertexArrayVertexBuffer(Id(), binding_index, buffer.Id(), offset, stride);
+  }
+
+  void BindingDivisor(GLuint binding_index, GLuint divisor) {
+    glVertexArrayBindingDivisor(Id(), binding_index, divisor);
   }
 
   template <typename... AttribIndices>

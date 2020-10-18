@@ -15,59 +15,28 @@ using namespace glpp;
 using namespace std;
 
 namespace {
+const array<vec3, 8> vertices{vec3(-.5f, -.5f, -.5f), vec3(-.5f, .5f, -.5f),
+                              vec3(.5f, -.5f, -.5f),  vec3(.5f, .5f, -.5f),
+                              vec3(-.5f, -.5f, .5f),  vec3(-.5f, .5f, .5f),
+                              vec3(.5f, -.5f, .5f),   vec3(.5f, .5f, .5f)};
+
+const array<uint, 36> indices{0, 1, 2, 2, 1, 3, 7, 6, 3, 3, 6, 2,
+                              7, 5, 6, 6, 5, 4, 4, 0, 6, 6, 0, 2,
+                              1, 0, 5, 5, 0, 4, 3, 1, 7, 7, 1, 5};
+
 string vertex_shader_source = R"(
 #version 450
 
 layout(location = 0) in mat4 model;
-
-out mat4 vModel;
-
-void main() {
-  vModel = model;
-}
-)";
-
-string geometry_shader_source = R"(
-#version 450
-layout(points) in;
-layout(triangle_strip, max_vertices = 24) out;
-
-in mat4 vModel[1];
+layout(location = 4) in vec3 pos;
 
 uniform mat4 viewPersp;
 
 out vec3 vTex;
 
-const vec3 cubeVerts[8] = vec3[8](
-  vec3(-0.5 , -0.5, -0.5),  // L B  0
-  vec3(-0.5, 0.5, -0.5),    // L T  1
-  vec3(0.5, -0.5, -0.5),    // R B  2
-  vec3( 0.5, 0.5, -0.5),    // R T  3
-  //back face
-  vec3(-0.5, -0.5, 0.5),    // L B  4
-  vec3(-0.5, 0.5, 0.5),     // L T  5
-  vec3(0.5, -0.5, 0.5),     // R B  6
-  vec3(0.5, 0.5, 0.5)       // R T  7
-);
-
-const int cubeIndices[6][4]  = int[][](
-  int[](0,1,2,3), //front
-  int[](7,6,3,2), //right
-  int[](7,5,6,4),  //back or whatever
-  int[](4,0,6,2), //btm
-  int[](1,0,5,4), //left
-  int[](3,1,7,5)
-);
-
 void main() {
-  for (int i = 0; i < 6; i++) {
-    for (int j = 0; j < 4; j++) {
-      gl_Position = viewPersp*vModel[0]*vec4(cubeVerts[cubeIndices[i][j]], 1);
-      vTex = cubeVerts[cubeIndices[i][j]];
-      EmitVertex();
-    }
-    EndPrimitive();
-  }
+  gl_Position = viewPersp*model*vec4(pos, 1);
+  vTex = pos;
 }
 )";
 
@@ -91,33 +60,45 @@ int main() {
   const auto window = SetupGL("Many dices");
 
   Program program{VertexShader{vertex_shader_source},
-                  GeometryShader{geometry_shader_source},
                   FragmentShader{fragment_shader_source}};
 
   const auto grid = 7;
   vector<mat4> transforms(grid * grid);
   for (int i = 0; i < grid; ++i) {
     for (int j = 0; j < grid; ++j) {
+      const auto p = vec3{(i - (float(grid) - 1) / 2) * 1.8f,
+                          (j - (float(grid) - 1) / 2) * 1.8f, -10};
       transforms[i * grid + j] =
-          translate(vec3{(i - (float(grid) - 1) / 2) * 1.8f,
-                         (j - (float(grid) - 1) / 2) * 1.8f, -10});
+          inverse(lookAt(p, p + sphericalRand(1.0f), vec3{0, 1, 0}));
     }
   }
-
   vector<vec3> rotations(grid * grid);
   for (auto& r : rotations) {
     r = sphericalRand(1.0f);
   }
+  Buffer transform_buffer;
+  transform_buffer.CreateStorage(transforms, GL_DYNAMIC_STORAGE_BIT);
 
-  Buffer vertex_buffer;
-  vertex_buffer.CreateStorage(transforms, GL_DYNAMIC_STORAGE_BIT);
+  Buffer vbo;
+  vbo.CreateStorage(vertices);
+
+  Buffer ebo;
+  ebo.CreateStorage(indices);
+
   VertexArray vao;
-  vao.BindVertexBuffer(0, vertex_buffer, sizeof(mat4), 0);
+  vao.BindElementBuffer(ebo);
+  vao.BindVertexBuffer(0, transform_buffer, sizeof(mat4));
+  vao.BindingDivisor(0, 1);
   vao.EnableAttrib(0, 1, 2, 3);
   vao.AttribBinding(0, 0, 1, 2, 3);
   for (int i = 0; i < 4; ++i) {
     vao.AttribFormat<vec4>(i, i * sizeof(vec4));
   }
+
+  vao.BindVertexBuffer(1, vbo, sizeof(vec3));
+  vao.EnableAttrib(4);
+  vao.AttribBinding(1, 4);
+  vao.AttribFormat<vec3>(4, 0);
 
   TextureCubemap texture;
   texture.CreateStorage(1, GL_RGBA4, face_size);
@@ -140,16 +121,16 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const auto ratio = (float)width / height;
-    //    const auto p = ortho(-ratio * 6, ratio * 6, -7.f, 7.f, -2.f, 2.f);
     const auto p = perspective(pi<float>() / 3, ratio, .01f, 100.f);
     program.Uniform("viewPersp", p);
 
     for (int i = 0; i < grid * grid; ++i) {
       transforms[i] = rotate(transforms[i], 0.02f, rotations[i]);
     }
-    vertex_buffer.SetSubData(transforms);
+    transform_buffer.SetSubData(transforms);
 
-    glDrawArrays(GL_POINTS, 0, grid * grid);
+    glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr,
+                            grid * grid);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
