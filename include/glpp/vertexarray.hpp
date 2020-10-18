@@ -33,25 +33,16 @@ class VertexArray : public details::Object<details::VertexArrayTrait> {
     glVertexArrayVertexBuffer(Id(), bindingindex, buffer.Id(), offset, stride);
   }
 
-  void AttribBinding(GLuint bindingindex, GLuint attribindex) {
-    glVertexArrayAttribBinding(Id(), attribindex, bindingindex);
+  template <typename... AttribIndices>
+  void AttribBinding(GLuint binding_index, AttribIndices... attrib_indices) {
+    static_assert(sizeof...(attrib_indices), "No attribute to bind");
+    (glVertexArrayAttribBinding(Id(), attrib_indices, binding_index), ...);
   }
 
   template <typename... AttribIndices>
-  void AttribBinding(GLuint bindingindex, GLuint attribindex,
-                     AttribIndices... attrib_indices) {
-    AttribBinding(bindingindex, attribindex);
-    (AttribBinding(bindingindex, attrib_indices), ...);
-  }
-
-  void EnableAttrib(GLuint attribindex) {
-    glEnableVertexArrayAttrib(Id(), attribindex);
-  }
-
-  template <typename... AttribIndices>
-  void EnableAttrib(GLuint attribindex, AttribIndices... attrib_indices) {
-    EnableAttrib(attribindex);
-    (EnableAttrib(attrib_indices), ...);
+  void EnableAttrib(AttribIndices... attrib_indices) {
+    static_assert(sizeof...(attrib_indices), "No attribute to enable");
+    (glEnableVertexArrayAttrib(Id(), attrib_indices), ...);
   }
 
   void AttribFormat(GLuint attribindex, GLint size, GLenum type,
