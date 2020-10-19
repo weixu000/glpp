@@ -107,8 +107,7 @@ int main() {
     texture.SetSubImage(0, 0, 0, i, face_size, face_size, GL_RGBA,
                         GL_UNSIGNED_SHORT_4_4_4_4, faces[face_indices[i]]);
   }
-  glActiveTexture(GL_TEXTURE0);
-  texture.Bind();
+  texture.BindUnit(0);
   program.Uniform("faces", 0);
 
   program.Use();

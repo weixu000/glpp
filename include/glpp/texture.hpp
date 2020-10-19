@@ -31,6 +31,13 @@ struct TextureTrait {
 };
 
 template <typename Texture>
+struct TextureUnitMixin {
+  void BindUnit(GLuint unit) {
+    glBindTextureUnit(unit, static_cast<Texture &>(*this).Id());
+  }
+};
+
+template <typename Texture>
 struct TextureMipmapMixin {
   void GenerateMipmap() {
     glGenerateMipmap(static_cast<Texture &>(*this).Id());
@@ -59,6 +66,7 @@ struct TextureWrapMixin {
 
 class Texture1D
     : public details::Object<details::TextureTrait<TextureType::TEXTURE_1D>>,
+      public details::TextureUnitMixin<Texture1D>,
       public details::TextureMipmapMixin<Texture1D>,
       public details::TextureFilteringMixin<Texture1D>,
       public details::TextureWrapMixin<Texture1D, GL_TEXTURE_WRAP_S> {
@@ -75,6 +83,7 @@ class Texture1D
 
 class Texture2D
     : public details::Object<details::TextureTrait<TextureType::TEXTURE_2D>>,
+      public details::TextureUnitMixin<Texture2D>,
       public details::TextureMipmapMixin<Texture2D>,
       public details::TextureFilteringMixin<Texture2D>,
       public details::TextureWrapMixin<Texture2D, GL_TEXTURE_WRAP_S,
@@ -96,6 +105,7 @@ class Texture2D
 class TextureCubemap
     : public details::Object<
           details::TextureTrait<TextureType::TEXTURE_CUBE_MAP>>,
+      public details::TextureUnitMixin<TextureCubemap>,
       public details::TextureMipmapMixin<TextureCubemap>,
       public details::TextureFilteringMixin<TextureCubemap> {
  public:

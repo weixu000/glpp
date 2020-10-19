@@ -85,8 +85,7 @@ int main() {
   texture.SetSubImage(0, 0, 0, logo_width, logo_height, GL_RGBA,
                       GL_UNSIGNED_SHORT_4_4_4_4, logo);
   texture.SetWraps(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-  glActiveTexture(GL_TEXTURE0);
-  texture.Bind();
+  texture.BindUnit(0);
   program.Uniform("logo", 0);
 
   program.Use();
