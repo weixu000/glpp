@@ -53,6 +53,12 @@ class Buffer : public details::Object<details::BufferTrait> {
                offset);
   }
 
+  void *MapRange(GLintptr offset, GLsizeiptr length, GLbitfield access) {
+    return glMapNamedBufferRange(Id(), offset, length, access);
+  }
+
+  void Unmap() { glUnmapNamedBuffer(Id()); }
+
   void InvalidateData() { glInvalidateBufferData(Id()); }
 };
 }  // namespace glpp
