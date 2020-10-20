@@ -58,45 +58,37 @@ class VertexArray : public details::Object<details::VertexArrayTrait> {
   template <typename T>
   void AttribFormat(GLuint attribindex, GLuint relativeoffset);
 
-  template <typename Tuple>
-  void AttribFormat(GLuint bindingindex) {
-    SetAttribFormatFromTupleImpl<Tuple>(
-        bindingindex, std::make_index_sequence<std::tuple_size_v<Tuple>>{});
+  void AttribIFormat(GLuint attribindex, GLint size, GLenum type,
+                     GLuint relativeoffset) {
+    glVertexArrayAttribIFormat(Id(), attribindex, size, type, relativeoffset);
   }
 
- private:
-  template <typename Tuple, std::size_t... Is>
-  void SetAttribFormatFromTupleImpl(GLuint bindingindex,
-                                    std::index_sequence<Is...>) {
-    (AttribBinding(bindingindex, Is), ...);
-    GLuint offset = sizeof(Tuple);
-    ((offset -= sizeof(std::tuple_element_t<Is, Tuple>),
-      AttribFormat<std::tuple_element_t<Is, Tuple>>(Is, offset)),
-     ...);
-  }
+  template <typename T>
+  void AttribIFormat(GLuint attribindex, GLuint relativeoffset);
 };
 
-template <>
-inline void VertexArray::AttribFormat<float>(GLuint attribindex,
-                                             GLuint relativeoffset) {
-  AttribFormat(attribindex, 1, GL_FLOAT, GL_FALSE, relativeoffset);
-}
+#define ATTRIB_FORMAT_DEFINE(T, size, type, normalized)                \
+  template <>                                                          \
+  inline void VertexArray::AttribFormat<T>(GLuint attribindex,         \
+                                           GLuint relativeoffset) {    \
+    AttribFormat(attribindex, size, type, normalized, relativeoffset); \
+  }
 
-template <>
-inline void VertexArray::AttribFormat<glm::vec2>(GLuint attribindex,
-                                                 GLuint relativeoffset) {
-  AttribFormat(attribindex, 2, GL_FLOAT, GL_FALSE, relativeoffset);
-}
+ATTRIB_FORMAT_DEFINE(float, 1, GL_FLOAT, GL_FALSE)
+ATTRIB_FORMAT_DEFINE(glm::vec2, 2, GL_FLOAT, GL_FALSE)
+ATTRIB_FORMAT_DEFINE(glm::vec3, 3, GL_FLOAT, GL_FALSE)
+ATTRIB_FORMAT_DEFINE(glm::vec4, 4, GL_FLOAT, GL_FALSE)
 
-template <>
-inline void VertexArray::AttribFormat<glm::vec3>(GLuint attribindex,
-                                                 GLuint relativeoffset) {
-  AttribFormat(attribindex, 3, GL_FLOAT, GL_FALSE, relativeoffset);
-}
+#undef ATTRIB_FORMAT_DEFINE
 
-template <>
-inline void VertexArray::AttribFormat<glm::vec4>(GLuint attribindex,
-                                                 GLuint relativeoffset) {
-  AttribFormat(attribindex, 4, GL_FLOAT, GL_FALSE, relativeoffset);
-}
+#define ATTRIB_I_FORMAT_DEFINE(T, size, type)                        \
+  template <>                                                        \
+  inline void VertexArray::AttribIFormat<T>(GLuint attribindex,      \
+                                            GLuint relativeoffset) { \
+    AttribIFormat(attribindex, size, type, relativeoffset);          \
+  }
+
+ATTRIB_I_FORMAT_DEFINE(glm::uint, 1, GL_UNSIGNED_INT)
+
+#undef ATTRIB_I_FORMAT_DEFINE
 }  // namespace glpp
