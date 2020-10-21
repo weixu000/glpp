@@ -12,6 +12,7 @@ enum class TextureType : GLenum {
   TEXTURE_1D = GL_TEXTURE_1D,
   TEXTURE_2D = GL_TEXTURE_2D,
   TEXTURE_CUBE_MAP = GL_TEXTURE_CUBE_MAP,
+  TEXTURE_CUBE_MAP_ARRAY = GL_TEXTURE_CUBE_MAP_ARRAY
 };
 
 namespace details {
@@ -118,6 +119,26 @@ class TextureCubemap
                    const void *pixels) {
     glTextureSubImage3D(Id(), level, xoffset, yoffset, face, width, height, 1,
                         format, type, pixels);
+  }
+};
+
+class TextureCubemapArray
+    : public details::Object<
+          details::TextureTrait<TextureType::TEXTURE_CUBE_MAP_ARRAY>>,
+      public details::TextureUnitMixin<TextureCubemapArray>,
+      public details::TextureMipmapMixin<TextureCubemapArray>,
+      public details::TextureFilteringMixin<TextureCubemapArray> {
+ public:
+  void CreateStorage(GLsizei levels, GLenum internalformat, GLsizei size,
+                     GLsizei layers) {
+    glTextureStorage3D(Id(), levels, internalformat, size, size, layers * 6);
+  }
+
+  void SetSubImage(GLint level, GLint xoffset, GLint yoffset, GLint layer,
+                   GLint face, GLsizei width, GLsizei height, GLenum format,
+                   GLenum type, const void *pixels) {
+    glTextureSubImage3D(Id(), level, xoffset, yoffset, layer * 6 + face, width,
+                        height, 1, format, type, pixels);
   }
 };
 }  // namespace glpp
