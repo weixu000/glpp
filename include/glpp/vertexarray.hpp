@@ -88,7 +88,15 @@ ATTRIB_FORMAT_DEFINE(glm::vec4, 4, GL_FLOAT, GL_FALSE)
     AttribIFormat(attribindex, size, type, relativeoffset);          \
   }
 
+ATTRIB_I_FORMAT_DEFINE(int, 1, GL_INT)
+ATTRIB_I_FORMAT_DEFINE(glm::ivec2, 2, GL_INT)
+ATTRIB_I_FORMAT_DEFINE(glm::ivec3, 3, GL_INT)
+ATTRIB_I_FORMAT_DEFINE(glm::ivec4, 4, GL_INT)
+
 ATTRIB_I_FORMAT_DEFINE(glm::uint, 1, GL_UNSIGNED_INT)
+ATTRIB_I_FORMAT_DEFINE(glm::uvec2, 2, GL_UNSIGNED_INT)
+ATTRIB_I_FORMAT_DEFINE(glm::uvec3, 3, GL_UNSIGNED_INT)
+ATTRIB_I_FORMAT_DEFINE(glm::uvec4, 4, GL_UNSIGNED_INT)
 
 #undef ATTRIB_I_FORMAT_DEFINE
 }  // namespace glpp
