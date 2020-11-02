@@ -11,7 +11,8 @@ namespace glpp {
 enum class ShaderStage : GLenum {
   VERTEX_SHADER = GL_VERTEX_SHADER,
   GEOMETRY_SHADER = GL_GEOMETRY_SHADER,
-  FRAGMENT_SHADER = GL_FRAGMENT_SHADER
+  FRAGMENT_SHADER = GL_FRAGMENT_SHADER,
+  COMPUTE_SHADER = GL_COMPUTE_SHADER
 };
 
 namespace details {
@@ -76,4 +77,5 @@ class Shader : public details::Object<details::ShaderTrait<stage>> {
 using VertexShader = Shader<ShaderStage::VERTEX_SHADER>;
 using GeometryShader = Shader<ShaderStage::GEOMETRY_SHADER>;
 using FragmentShader = Shader<ShaderStage::FRAGMENT_SHADER>;
+using ComputeShader = Shader<ShaderStage::COMPUTE_SHADER>;
 }  // namespace glpp

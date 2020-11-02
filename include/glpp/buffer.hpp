@@ -7,7 +7,8 @@ namespace glpp {
 enum class BufferTarget : GLenum {
   ARRAY_BUFFER = GL_ARRAY_BUFFER,
   ELEMENT_ARRAY_BUFFER = GL_ELEMENT_ARRAY_BUFFER,
-  DRAW_INDIRECT_BUFFER = GL_DRAW_INDIRECT_BUFFER
+  DRAW_INDIRECT_BUFFER = GL_DRAW_INDIRECT_BUFFER,
+  SHADER_STORAGE_BUFFER = GL_SHADER_STORAGE_BUFFER
 };
 
 namespace details {
@@ -30,6 +31,10 @@ struct BufferTrait {
 
 class Buffer : public details::Object<details::BufferTrait> {
  public:
+  void BindBase(BufferTarget target, GLuint index) {
+    glBindBufferBase(static_cast<GLenum>(target), index, Id());
+  }
+
   void CreateStorage(GLsizeiptr size, const void *data = nullptr,
                      GLbitfield flags = 0) {
     glNamedBufferStorage(Id(), size, data, flags);
@@ -61,5 +66,12 @@ class Buffer : public details::Object<details::BufferTrait> {
   void Unmap() { glUnmapNamedBuffer(Id()); }
 
   void InvalidateData() { glInvalidateBufferData(Id()); }
+
+  static void CopySubData(const Buffer &read_buffer, Buffer &write_buffer,
+                          GLintptr readOffset, GLintptr writeOffset,
+                          GLsizei size) {
+    glCopyNamedBufferSubData(read_buffer.Id(), write_buffer.Id(), readOffset,
+                             writeOffset, size);
+  }
 };
 }  // namespace glpp
